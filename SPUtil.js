@@ -21,13 +21,19 @@ var SPUtil = {
 	clamp:function(val,min,max) {
 		return val < min ? min : (val > max ? max : val);
 	},
-	cache_cond_update(cache,key,val) {
+	cache_cond_update:function(cache,key,val) {
 		var rtv = false;
 		if (cache[key] != val) {
 			rtv = true;
 			cache[key] = val;
 		}
 		return rtv;
+	},
+	assert_b_has_all_a_prop:function(a,b) {
+		for (var i in a) {
+			if (b[i] === undefined) return false;
+		}
+		return true;
 	}
 };
 

@@ -53,14 +53,14 @@ function SPGridCore() { var self; return {
 
 		if (g._input.mouse_just_released()) {
 			var grid_mouse_pos = self.get_grid_mouse_position(g);
-			if (g._ui._params._mode == g._ui.MODES._1pt) {
+			if (g._ui._params._mode == g._ui.MODES["1pt"]) {
 				self._params._mode = self.MODES.PLACE_PT_START;
 				g._data._entries.push(g._data.cons_1pt(
 					g._ui._params._val, 
 					g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y)
 				));
 
-			} else if (g._ui._params._mode == g._ui.MODES._2pt) {
+			} else if (g._ui._params._mode == g._ui.MODES["2pt"]) {
 				if (self._params._mode == self.MODES.PLACE_PT_START) {
 					self._params._2pt._pt_start.x = grid_mouse_pos.x;
 					self._params._2pt._pt_start.y = grid_mouse_pos.y;

@@ -1,7 +1,7 @@
 function SPAppUI() { var self; return {
 	MODES : {
-		_1pt : "1pt",
-		_2pt : "2pt"
+		"1pt" : "1pt",
+		"2pt" : "2pt"
 	},
 	_params : {
 		_mode : "",
@@ -15,7 +15,7 @@ function SPAppUI() { var self; return {
 
 	i_cons: function(g) {
 		self = this;
-		self._params._mode = self.MODES._2pt;
+		self._params._mode = self.MODES["2pt"];
 
 		$(".controls").draggable({handle:"b"});
 
@@ -65,9 +65,9 @@ function SPAppUI() { var self; return {
 		}
 
 		self._params._mode = mode;
-		if (mode == self.MODES._1pt) {
+		if (mode == self.MODES["1pt"]) {
 			self._params._val = $(".1pt > .val_select > option:selected").val();
-		} else {
+		} else if (mode == self.MODES["2pt"]) {
 			self._params._val = $(".2pt > .val_select > option:selected").val();
 		}
 		g._grid.notify_ui_mode_change(g);

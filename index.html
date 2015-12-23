@@ -69,15 +69,15 @@
 HanokamEditor_Water
 		</textarea>
 		<br />
-		<input type="button" value="Load JSON" onclick="" style="float:left;" />
-		<input type="button"  value="Output JSON (P)" onclick="" style="float:right;" />
+		<input type="button" value="Load JSON" onclick="_g._data.json_in_pressed()" style="float:left;" />
+		<input type="button"  value="Output JSON (P)" onclick="_g._data.json_out_pressed()" style="float:right;" />
 	</div>
 	
 	<div class="controls" style="top:300px;">
 		<b>Mode</b><br/>
 		<div>
-			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES._1pt)">1pt</button><br/>
-			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES._2pt)">2pt</button><br/>
+			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES['1pt'])">1pt</button><br/>
+			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES['2pt'])">2pt</button><br/>
 		</div>
 	</div>
 	
