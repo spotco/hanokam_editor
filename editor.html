@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script src="jquery-ui.min.js" type="text/javascript"></script>
+	<link href="jquery-ui.css" rel="stylesheet" type="text/css" />
+
+	<script src="util.js" type="text/javascript"></script>
+	<script src="Canvas.js" type="text/javascript"></script>
+	<script src="data.js" type="text/javascript"></script>
+	<script src="grid.js" type="text/javascript"></script>
+	<script src="ui.js" type="text/javascript"></script>
+	
+	<style type="text/css">
+.controls {
+	display:inline-block;
+	background:#AAAAAA;
+	border:3px dashed grey;
+	position:absolute;
+	overflow:hidden;
+	white-space:nowrap;
+	padding:5px;
+}
+.modebutton {
+	padding:5px;
+}
+	</style>
+	
+	<script type="text/javascript">
+		var _g = {
+			_data : DATA(),
+			_ui : UI(),
+			_grid : GRID(),
+			_input : INPUT(),
+		};
+
+		$(function() {
+			$(".grid").attr("tabindex", "0");
+
+			var components = [
+				_g._data,
+				_g._ui,
+				_g._grid,
+				_g._input
+			];
+
+			components.forEach(function(itr){
+				itr.i_cons(_g);
+			})
+
+			window.setInterval(function() {
+				components.forEach(function(itr){
+					itr.i_update(_g);
+				});
+			},40);
+		});
+	</script>
+</head>
+
+<body>
+	<canvas id="grid" width="600px" height="600px" style="background-color:rgb(0,0,0)">
+	</canvas>
+
+	<div class="controls">
+		<b>Input/Output</b><br/>
+		<textarea id="msgout" style="width:400px;height:200px;">
+HanokamEditor_Water
+		</textarea>
+		<br />
+		<input type="button" value="Load JSON" onclick="" style="float:left;" />
+		<input type="button"  value="Output JSON (P)" onclick="" style="float:right;" />
+	</div>
+	
+	<div class="controls" style="top:300px;">
+		<b>Mode</b><br/>
+		<div>
+			<button class="modebutton" onclick="_ui.set_and_update_mode(_ui.MODES._1pt)">1pt</button><br/>
+			<button class="modebutton" onclick="_ui.set_and_update_mode(_ui.MODES._2pt)">2pt</button><br/>
+		</div>
+	</div>
+	
+	<div class="controls" style="top:400px;">
+		<b>Values</b><br/>
+		<div class="_1pt">
+			Mode: 1pt<br/>
+			Val:
+			<select class="val_select">
+			</select>
+		</div>
+		<div class="_2pt">
+			Mode: 2pt<br/>
+			Val:
+			<select class="val_select">
+			</select>
+		</div>
+	</div>
+</body>
+</html>
