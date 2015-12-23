@@ -2,7 +2,9 @@ function SPGridCore() { var self; return {
 	MODES : {
 		PLACE_PT_START : "PLACE_PT_START",
 		PLACE_PT1 : "PLACE_PT1",
-		PLACE_PT2 : "PLACE_PT2"
+		PLACE_PT2 : "PLACE_PT2",
+		EDITMOVE : "EDITMOVE",
+		EDITDELETE : "EDITDELETE"
 	},
 
 	_params: {
@@ -51,9 +53,29 @@ function SPGridCore() { var self; return {
 			self._params._scale = SPUtil.clamp(self._params._scale-0.1,0.3,3);
 		}
 
+		if (g._input.key_just_pressed(CONTROLS.EDITMOVE)) {
+			self.reset_preview_params(g);
+			self._params._mode = self.MODES.EDITMOVE;
+		} else if (g._input.key_just_released(CONTROLS.EDITMOVE,true)) {
+			self._params._mode = self.MODES.PLACE_PT_START;
+		}
+
+		if (g._input.key_just_pressed(CONTROLS.EDITDELETE)) {
+			self.reset_preview_params(g);
+			self._params._mode = self.MODES.EDITDELETE;
+
+		} else if (g._input.key_just_released(CONTROLS.EDITDELETE,true)) {
+			self._params._mode = self.MODES.PLACE_PT_START;
+		} 
+
 		if (g._input.mouse_just_released()) {
 			var grid_mouse_pos = self.get_grid_mouse_position(g);
-			if (g._ui._params._mode == g._ui.MODES["1pt"]) {
+
+			if (self._params._mode == self.MODES.EDITMOVE) {
+
+			} else if (self._params._mode == self.MODES.EDITDELETE) {
+
+			} else if (g._ui._params._mode == g._ui.MODES["1pt"]) {
 				self._params._mode = self.MODES.PLACE_PT_START;
 				g._data._entries.push(g._data.cons_1pt(
 					g._ui._params._val, 
@@ -79,7 +101,7 @@ function SPGridCore() { var self; return {
 						g._data.cons_point(self._params._2pt._pt_start.x,self._params._2pt._pt_start.y),
 						g._data.cons_point(self._params._2pt._pt1.x,self._params._2pt._pt1.y),
 						g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y),
-						g._ui._params._2pt._goto_pt_1
+						g._ui._params._2pt.get_current_speed()
 					));
 					self._params._mode = self.MODES.PLACE_PT_START;
 					self._params._2pt.reset();
@@ -91,6 +113,9 @@ function SPGridCore() { var self; return {
 	},
 
 	notify_ui_mode_change:function(g) {
+		self.reset_preview_params(g);
+	},
+	reset_preview_params:function(g) {
 		self._params._2pt.reset();
 	},
 
@@ -138,20 +163,15 @@ function SPGridCore() { var self; return {
 				self._canvas.draw_line(itr.pt1.x,-itr.pt1.y,itr.pt2.x,-itr.pt2.y,2,COLOR.RED);
 				self._canvas.draw_circ(itr.pt2.x,-itr.pt2.y,5,COLOR.RED);
 
-				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");
+				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val+"("+itr.speed+")",15,COLOR.YELLOW,"center");
 				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
 
 				var pt_1 = g._data._pt_tmp_1;
 				pt_1.x = itr.start.x; 
 				pt_1.y = itr.start.y;
 				var pt_2 = g._data._pt_tmp_2;
-				if (itr.goto_pt1) {
-					pt_2.x = itr.pt1.x; 
-					pt_2.y = itr.pt1.y;
-				} else {
-					pt_2.x = itr.pt2.x; 
-					pt_2.y = itr.pt2.y;
-				}
+				pt_2.x = itr.pt1.x; 
+				pt_2.y = itr.pt1.y;
 				var dir = Vector3d._tmp.set(pt_2.x-pt_1.x,pt_2.y-pt_1.y,0).normalize().scale(20);
 
 				self._canvas.draw_line(

@@ -8,7 +8,9 @@ function SPAppUI() { var self; return {
 		_val : "",
 
 		_2pt : {
-			_goto_pt_1 : true
+			get_current_speed : function() {
+				return $(".2pt > .speed_select").val();
+			}
 		}
 	},
 	_cache : {},
@@ -18,6 +20,19 @@ function SPAppUI() { var self; return {
 		self._params._mode = self.MODES["2pt"];
 
 		$(".controls").draggable({handle:"b"});
+
+		//types config
+		for (var itr in self.MODES) {
+			var itr_option = $("<option/>");
+			itr_option.attr({"value":itr}).text(itr);
+			$("#type_select").append(itr_option);	
+			if (self._params._mode == self.MODES[itr]) {
+				itr_option.attr("selected",true);
+			}
+		}
+		$("#type_select").on("change",function(val){
+			self.set_and_update_mode(g,self.MODES[$(this).val()]);
+		});
 
 		//1pt config
 		["bubble","spike"].forEach(function(itr){
@@ -38,9 +53,6 @@ function SPAppUI() { var self; return {
 		$(".2pt > .val_select").on("change",function(val) {
 			self._params._val = $(this).val();
 		});
-		$(".2pt > .goto_pt1_select").on("change",function(val) {
-			self._params._2pt._goto_pt_1 = (parseInt($(this).val()) == true);
-		});
 
 		self.set_and_update_mode(g,self._params._mode);
 	},
@@ -51,7 +63,19 @@ function SPAppUI() { var self; return {
 		if (SPUtil.cache_cond_update(self._cache,"grid_mode_disp_cache_key",g._grid._params._mode)) {
 			$("#info_current_grid_mode").text("GridMode:"+g._grid._params._mode);
 		}
+		if (g._input.key_just_released(CONTROLS.UNDO)) {
+			g._data.undo_last(g);
+		}
+		if (g._input.key_just_released(CONTROLS.PRINT)) {
+			self.json_out_pressed(g);
+		}
+	},
 
+	json_out_pressed: function (g) {
+		document.getElementById("msgout").value = g._data.json_out();
+	},
+	json_in_pressed: function(g) {
+		g._data.json_in(document.getElementById("msgout").value);
 	},
 
 	set_and_update_mode: function(g, mode) {

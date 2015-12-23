@@ -20,26 +20,30 @@ function SPAppData() { var self; return {
 
 	i_update: function() {},
 
-	json_out_pressed: function() {
-		document.getElementById("msgout").value = (JSON.stringify({
+	undo_last: function() {
+		if (self._entries.length > 0) {
+			self._entries.splice(self._entries.length-1,1);
+		}
+	},
+	json_out: function() {
+		return (JSON.stringify({
 			"entries":self._entries
 		}, null, 5));
 	},
-	json_in_pressed: function () {
+	json_in: function (text) {
 		var json_obj;
-		var text = document.getElementById("msgout").value;
 		try {
 			json_obj = JSON.parse(text);
 			
 		} catch(err) {
 			$("#msgout").text("bad json");
 			console.log(err);
-			return;
+			return false;
 		}
 
 		if (!SPUtil.assert_b_has_all_a_prop({"entries":[]},json_obj)) {
 			console.log("invalid json no entries at root");
-			return;
+			return false;
 		}
 
 		for (var i = 0; i < json_obj.entries.length; i++) {
@@ -47,10 +51,11 @@ function SPAppData() { var self; return {
 			var cmp = self._type_check_protos[itr.type];
 			if (!SPUtil.assert_b_has_all_a_prop(cmp,itr)) {
 				console.log("invalid json entry at entries["+i+"]");
-				return;
+				return false;
 			}
 		}
 		self._entries = json_obj.entries;
+		return true;
 	},
 
 	cons_point: function(x,y) {
@@ -65,14 +70,14 @@ function SPAppData() { var self; return {
 			"start":point_start
 		}
 	},
-	cons_2pt: function(val,point_start,point_pt1,point_pt2,goto_pt1) {
+	cons_2pt: function(val,point_start,point_pt1,point_pt2,speed) {
 		return {
 			"type":"2pt",
 			"val":val,
 			"pt1":point_pt1,
 			"pt2":point_pt2,
 			"start":point_start,
-			"goto_pt1":goto_pt1
+			"speed":speed
 		}
 	}
 

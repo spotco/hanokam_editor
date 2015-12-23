@@ -46,6 +46,7 @@ function SPInputManager() { var self; return {
 	},
 
 	i_update:function(g) {
+
 		self._just_pressed.length = 0;
 		self._just_released.length = 0;
 		self._mouse_just_pressed = false;
@@ -69,9 +70,15 @@ function SPInputManager() { var self; return {
 		self.__keyup_queue.length = 0;
 	},
 
-	key_pressed:function(key) { return self.has_focus() && !!self._keycode_to_pressed[key]; },
-	key_just_pressed:function(key) { return self.has_focus() && self._just_pressed.indexOf(key) != -1; },
-	key_just_released:function(key) { return self.has_focus() && self._just_released.indexOf(key) != -1; },
+	key_pressed:function(key, ignore_focus) { 
+		return (ignore_focus || self.has_focus()) && !!self._keycode_to_pressed[key]; 
+	},
+	key_just_pressed:function(key, ignore_focus) { 
+		return (ignore_focus || self.has_focus()) && self._just_pressed.indexOf(key) != -1; 
+	},
+	key_just_released:function(key, ignore_focus) { 
+		return (ignore_focus || self.has_focus()) && self._just_released.indexOf(key) != -1; 
+	},
 	mouse_pressed:function() { return self._mouse_down; },
 	mouse_just_pressed:function() { return self._mouse_just_pressed; },
 	mouse_just_released:function() { return self._mouse_just_released; },

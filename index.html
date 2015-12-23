@@ -36,7 +36,6 @@
 		};
 
 		$(function() {
-			$(".grid").attr("tabindex", "0");
 
 			// order here is relevant
 			var components = [
@@ -69,15 +68,19 @@
 HanokamEditor_Water
 		</textarea>
 		<br />
-		<input type="button" value="Load JSON" onclick="_g._data.json_in_pressed()" style="float:left;" />
-		<input type="button"  value="Output JSON (P)" onclick="_g._data.json_out_pressed()" style="float:right;" />
+		<input type="button" value="Load JSON" onclick="_g._ui.json_in_pressed(_g)" style="float:left;" />
+		<input type="button"  value="Output JSON (P)" onclick="_g._ui.json_out_pressed(_g)" style="float:right;" />
 	</div>
 	
 	<div class="controls" style="top:300px;">
 		<b>Mode</b><br/>
 		<div>
+			<select id="type_select">
+			</select>
+			<!--
 			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES['1pt'])">1pt</button><br/>
 			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES['2pt'])">2pt</button><br/>
+		-->
 		</div>
 	</div>
 	
@@ -95,11 +98,8 @@ HanokamEditor_Water
 			<select class="val_select">
 			</select>
 			<br/>
-			Go to PT1:
-			<select class="goto_pt1_select">
-				<option value="1">true</option>
-				<option value="0">false</option>
-			</select>
+			Speed:
+			<input class="speed_select" type="number" value="5" />
 		</div>
 	</div>
 
