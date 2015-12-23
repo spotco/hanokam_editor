@@ -23,7 +23,7 @@ var CONTROLS = {
 	MOVEFASTER: 16
 }
 
-function INPUT() { var self; return {
+function SPInputManager() { var self; return {
 	_keycode_to_pressed : {},
 	_just_pressed : [],
 	_just_released : [],

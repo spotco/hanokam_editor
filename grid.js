@@ -1,4 +1,4 @@
-function GRID() { var self; return {
+function SPGridCore() { var self; return {
 	_params: {
 		_x: 0,
 		_y: 0,

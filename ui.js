@@ -1,4 +1,4 @@
-function UI() { var self; return {
+function SPAppUI() { var self; return {
 	MODES : {
 		_1pt : "_1pt",
 		_2pt : "_2pt"

@@ -1,4 +1,4 @@
-function DATA() { var self; return {
+function SPAppData() { var self; return {
 	_entries : [],
 
 	i_cons: function() {
