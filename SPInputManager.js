@@ -1,28 +1,3 @@
-var SPUtil = {
-	clamp:function(val,min,max) {
-		return val < min ? min : (val > max ? max : val);
-	}
-};
-
-var COLOR = {
-	RED: "rgb(255,0,0)",
-    BLUE: "rgb(0,0,255)",
-    GREEN: "rgb(0,255,0)",
-    WHITE: "rgb(255,255,255)",
-    BLACK: "rgb(0,0,0)",
-   	YELLOW: "rgb(255,255,0)"
-}
-
-var CONTROLS = {
-	LEFT: 37,
-	UP: 38,
-	RIGHT: 39,
-	DOWN: 40,
-	ZOOMIN: 187,
-	ZOOMOUT: 189,
-	MOVEFASTER: 16
-}
-
 function SPInputManager() { var self; return {
 	_keycode_to_pressed : {},
 	_just_pressed : [],
@@ -49,20 +24,20 @@ function SPInputManager() { var self; return {
 				self._mouse_just_pressed = true;
 			}
 			self._mouse_down = true;
-			self._mouse_position.x = evt.offsetX;
-			self._mouse_position.y = evt.offsetY;
+			self._mouse_position.x = evt.layerX;
+			self._mouse_position.y = evt.layerY;
 		});
 		document.getElementById("grid").addEventListener("mousemove",function(evt) {
-			self._mouse_position.x = evt.offsetX;
-			self._mouse_position.y = evt.offsetY;
+			self._mouse_position.x = evt.layerX;
+			self._mouse_position.y = evt.layerY;
 		});
 		document.getElementById("grid").addEventListener("mouseup",function(evt) {
 			if (self._mouse_down) {
 				self._mouse_just_released = true;
 			}
 			self._mouse_down = false;
-			self._mouse_position.x = evt.offsetX;
-			self._mouse_position.y = evt.offsetY;
+			self._mouse_position.x = evt.layerX;
+			self._mouse_position.y = evt.layerY;
 		});
 	},
 
@@ -94,9 +69,9 @@ function SPInputManager() { var self; return {
 		self.__keyup_queue.length = 0;
 	},
 
-	key_pressed:function(key) { return !!self._keycode_to_pressed[key]; },
-	key_just_pressed:function(key) { return self._just_pressed.indexOf(key) != -1; },
-	key_just_released:function(key) { return self._just_released.indexOf(key) != -1; },
+	key_pressed:function(key) { return self.has_focus() && !!self._keycode_to_pressed[key]; },
+	key_just_pressed:function(key) { return self.has_focus() && self._just_pressed.indexOf(key) != -1; },
+	key_just_released:function(key) { return self.has_focus() && self._just_released.indexOf(key) != -1; },
 	mouse_pressed:function() { return self._mouse_down; },
 	mouse_just_pressed:function() { return self._mouse_just_pressed; },
 	mouse_just_released:function() { return self._mouse_just_released; },

@@ -5,11 +5,12 @@
 	<script src="jquery-ui.min.js" type="text/javascript"></script>
 	<link href="jquery-ui.css" rel="stylesheet" type="text/css" />
 
-	<script src="util.js" type="text/javascript"></script>
+	<script src="SPUtil.js" type="text/javascript"></script>
+	<script src="SPInputManager.js" type="text/javascript"></script>
 	<script src="Canvas.js" type="text/javascript"></script>
-	<script src="data.js" type="text/javascript"></script>
-	<script src="grid.js" type="text/javascript"></script>
-	<script src="ui.js" type="text/javascript"></script>
+	<script src="SPAppData.js" type="text/javascript"></script>
+	<script src="SPGridCore.js" type="text/javascript"></script>
+	<script src="SPAppUI.js" type="text/javascript"></script>
 	
 	<style type="text/css">
 .controls {
@@ -37,10 +38,11 @@
 		$(function() {
 			$(".grid").attr("tabindex", "0");
 
+			// order here is relevant
 			var components = [
 				_g._data,
-				_g._ui,
 				_g._grid,
+				_g._ui,
 				_g._input
 			];
 
@@ -74,25 +76,37 @@ HanokamEditor_Water
 	<div class="controls" style="top:300px;">
 		<b>Mode</b><br/>
 		<div>
-			<button class="modebutton" onclick="_ui.set_and_update_mode(_ui.MODES._1pt)">1pt</button><br/>
-			<button class="modebutton" onclick="_ui.set_and_update_mode(_ui.MODES._2pt)">2pt</button><br/>
+			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES._1pt)">1pt</button><br/>
+			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES._2pt)">2pt</button><br/>
 		</div>
 	</div>
 	
 	<div class="controls" style="top:400px;">
 		<b>Values</b><br/>
-		<div class="_1pt">
-			Mode: 1pt<br/>
+		<div class="1pt">
+			1pt values<br/>
 			Val:
 			<select class="val_select">
 			</select>
 		</div>
-		<div class="_2pt">
-			Mode: 2pt<br/>
+		<div class="2pt">
+			2pt values<br/>
 			Val:
 			<select class="val_select">
 			</select>
+			<br/>
+			Go to PT1:
+			<select class="goto_pt1_select">
+				<option value="1">true</option>
+				<option value="0">false</option>
+			</select>
 		</div>
+	</div>
+
+	<div class="controls" style="top:300px;left:800px;width:300px">
+		<b>Info</b><br/>
+		<div id="info_focused"></div>
+		<div id="info_current_grid_mode"></div>
 	</div>
 </body>
 </html>
