@@ -18,7 +18,8 @@ var CONTROLS = {
 	UNDO: 90,
 	PRINT: 80,
 	EDITMOVE: 65,
-	EDITDELETE: 68
+	EDITDELETE: 68,
+    EDITCANCEL: 67
 }
 
 var SPUtil = {
@@ -38,7 +39,10 @@ var SPUtil = {
 			if (b[i] === undefined) return false;
 		}
 		return true;
-	}
+	},
+    pt_dist:function(a,b) {
+        return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));
+    }
 };
 
 var Vector3d = (function () {
