@@ -7,6 +7,7 @@ function SPGridCore() { var self; return {
 		EDITMOVE_HAS_POINT : "EDITMOVE_HAS_POINT",
 		EDITDELETE : "EDITDELETE"
 	},
+	WORLD_BOUNDS : {left:-500,right:500},
 
 	_params: {
 		_x: 0,
@@ -52,9 +53,9 @@ function SPGridCore() { var self; return {
 		} else if (g._input.key_pressed(CONTROLS.DOWN)) {
 			self._params._y -= move_speed / self._params._scale;
 		}
-		if (g._input.key_pressed(CONTROLS.ZOOMIN)) {
+		if (g._input.key_just_released(CONTROLS.ZOOMIN)) {
 			self._params._scale = SPUtil.clamp(self._params._scale+0.1,0.3,3);
-		} else if (g._input.key_pressed(CONTROLS.ZOOMOUT)) {
+		} else if (g._input.key_just_released(CONTROLS.ZOOMOUT)) {
 			self._params._scale = SPUtil.clamp(self._params._scale-0.1,0.3,3);
 		}
 		if (g._input.key_just_pressed(CONTROLS.EDITCANCEL)) {
@@ -249,6 +250,22 @@ function SPGridCore() { var self; return {
 		var screen_top_y = self._params._y*self._params._scale + view_height/2;
 		var screen_left_x = self._params._x*self._params._scale - view_width/2;
 		var screen_right_x = self._params._x*self._params._scale + view_width/2;
+
+		if (screen_left_x < self.WORLD_BOUNDS.left) {
+			self._canvas.save();
+			self._canvas.alpha(0.2);
+			self._canvas.draw_rect(screen_left_x,-screen_bottom_y,self.WORLD_BOUNDS.left-screen_left_x,-(screen_top_y-screen_bottom_y),COLOR.WHITE);
+			self._canvas.restore();
+		}
+		
+		if (screen_right_x > self.WORLD_BOUNDS.right) {
+			self._canvas.save();
+			self._canvas.alpha(0.2);
+			var wid = screen_right_x-self.WORLD_BOUNDS.right;
+			self._canvas.draw_rect(screen_right_x-wid,-screen_bottom_y,wid,-(screen_top_y-screen_bottom_y),COLOR.WHITE);
+			self._canvas.restore();
+		}
+		
 
 		for (var i = Math.floor(screen_bottom_y/50)*50; i < screen_top_y; i+= 50) {
 			self._canvas.save();

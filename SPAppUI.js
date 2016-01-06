@@ -9,7 +9,7 @@ function SPAppUI() { var self; return {
 
 		_2pt : {
 			get_current_speed : function() {
-				return $(".2pt > .speed_select").val();
+				return parseFloat($(".2pt > .speed_select").val());
 			}
 		}
 	},
