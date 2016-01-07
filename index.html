@@ -28,6 +28,10 @@
 	</style>
 	
 	<script type="text/javascript">
+		/*
+		TODO:
+		snap to grid
+		*/
 		var _g = {
 			_data : SPAppData(),
 			_ui : SPAppUI(),
@@ -38,19 +42,26 @@
 		$(function() {
 
 			// order here is relevant
-			var components = [
+			var cons_order = [
+				_g._input,
+				_g._data,
+				_g._grid,
+				_g._ui
+			];
+
+			var update_order = [
 				_g._data,
 				_g._grid,
 				_g._ui,
 				_g._input
 			];
 
-			components.forEach(function(itr){
+			cons_order.forEach(function(itr){
 				itr.i_cons(_g);
 			})
 
 			window.setInterval(function() {
-				components.forEach(function(itr){
+				update_order.forEach(function(itr){
 					itr.i_update(_g);
 				});
 			},40);
@@ -73,19 +84,28 @@ HanokamEditor_Water
 	</div>
 	
 	<div class="controls" style="top:300px;">
-		<b>Mode</b><br/>
+		<style type="text/css">
+		.controls > div {
+			margin-bottom: 5px;
+		}
+		</style>
+		<b>EditorParams</b><br/>
 		<div>
+			Type:
 			<select id="type_select">
 			</select>
-			<!--
-			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES['1pt'])">1pt</button><br/>
-			<button class="modebutton" onclick="_g._ui.set_and_update_mode(_g,_g._ui.MODES['2pt'])">2pt</button><br/>
-		-->
+		</div>
+		<div>
+			Shift all y: <input id="shift_all_y_input" type="number" value="-50" />
+			<button id="shift_all_y_button">ShiftY</button>
+		</div>
+		<div>
+			<label><input id="snap_to_50" type="checkbox" name="checkbox" value="value" checked="checked">Snap To x50</label>
 		</div>
 	</div>
 	
-	<div class="controls" style="top:400px;">
-		<b>Values</b><br/>
+	<div class="controls" style="top:450px;">
+		<b>ModeValues</b><br/>
 		<div class="1pt">
 			1pt values<br/>
 			Val:
@@ -103,7 +123,7 @@ HanokamEditor_Water
 		</div>
 	</div>
 
-	<div class="controls" style="top:300px;left:800px;width:300px">
+	<div class="controls" style="top:600px;width:300px">
 		<b>Info</b><br/>
 		<div id="info_focused"></div>
 		<div id="info_current_grid_mode"></div>

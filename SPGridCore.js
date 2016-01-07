@@ -93,7 +93,7 @@ function SPGridCore() { var self; return {
 				self._params._mode = self.MODES.PLACE_PT_START;
 
 			} else if (self._params._mode == self.MODES.EDITMOVE) {
-				var click_point_element_result = self.click_point0_element1(g,grid_mouse_pos);
+				var click_point_element_result = g._data.click_point0_element1(grid_mouse_pos);
 				if (click_point_element_result != null) {
 					var point = click_point_element_result[0];
 					self._params._mode = self.MODES.EDITMOVE_HAS_POINT;
@@ -101,7 +101,7 @@ function SPGridCore() { var self; return {
 				}
 
 			} else if (self._params._mode == self.MODES.EDITDELETE) {
-				var click_point_element_result = self.click_point0_element1(g,grid_mouse_pos);
+				var click_point_element_result = g._data.click_point0_element1(grid_mouse_pos);
 				if (click_point_element_result != null) {
 					var element = click_point_element_result[1];
 					g._data._entries = g._data._entries.filter(function(itr){
@@ -146,27 +146,6 @@ function SPGridCore() { var self; return {
 		self.draw(g);
 	},
 
-	click_point0_element1:function(g, grid_mouse_pos) {
-		var pt_dist_max = 10;
-		for (var i = 0; i < g._data._entries.length; i++) {
-			var itr = g._data._entries[i];
-			if (itr.type == "1pt") {
-				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
-					return [itr.start,itr];
-				}
-			} else if (itr.type == "2pt") {
-				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
-					return [itr.start,itr];
-				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt1) < pt_dist_max) {
-					return [itr.pt1,itr];
-				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt2) < pt_dist_max) {
-					return [itr.pt2,itr];
-				}
-			}
-		}
-		return null;
-	},
-
 	notify_ui_mode_change:function(g) {
 		self.reset_preview_params(g);
 	},
@@ -180,13 +159,19 @@ function SPGridCore() { var self; return {
 		
 		self.draw_grid(g);
 		self.draw_entries(g);
-
 		self.draw_preview(g);
 
 		self._canvas.set_identity();
 	},
 
 	draw_preview: function(g) {
+		var grid_mouse_pos = self.get_grid_mouse_position(g);
+
+		self._canvas.save();
+		self._canvas.alpha(0.3);
+		self._canvas.draw_circ(grid_mouse_pos.x,-grid_mouse_pos.y,4,COLOR.WHITE);
+		self._canvas.restore();
+
 		if (self._params._2pt._pt_start._draw) {
 			self._canvas.save();
 			self._canvas.alpha(0.5);
@@ -195,8 +180,7 @@ function SPGridCore() { var self; return {
 				self._canvas.draw_circ(
 					self._params._2pt._pt1.x,
 					-self._params._2pt._pt1.y,5,COLOR.RED);
-
-				var grid_mouse_pos = self.get_grid_mouse_position(g);
+				
 				self._canvas.draw_line(
 					self._params._2pt._pt1.x,
 					-self._params._2pt._pt1.y,
@@ -209,11 +193,11 @@ function SPGridCore() { var self; return {
 
 	draw_entries: function(g) {
 		g._data._entries.forEach(function(itr){
-			if (itr.type == "1pt") {
+			if (itr.type == g._data.TYPES._1pt) {
 				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
 				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");
 
-			} else if (itr.type == "2pt") {
+			} else if (itr.type == g._data.TYPES._2pt) {
 				self._canvas.draw_circ(itr.pt1.x,-itr.pt1.y,5,COLOR.RED);
 				self._canvas.draw_line(itr.pt1.x,-itr.pt1.y,itr.pt2.x,-itr.pt2.y,2,COLOR.RED);
 				self._canvas.draw_circ(itr.pt2.x,-itr.pt2.y,5,COLOR.RED);

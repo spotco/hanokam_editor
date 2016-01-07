@@ -24,21 +24,29 @@ function SPInputManager() { var self; return {
 				self._mouse_just_pressed = true;
 			}
 			self._mouse_down = true;
-			self._mouse_position.x = evt.layerX;
-			self._mouse_position.y = evt.layerY;
+			self._mouse_position.x = parseInt(evt.layerX);
+			self._mouse_position.y = parseInt(evt.layerY);
+			if (g._ui.should_snap_to_50()) self.snap_mouse_position_to_50();
 		});
 		document.getElementById("grid").addEventListener("mousemove",function(evt) {
-			self._mouse_position.x = evt.layerX;
-			self._mouse_position.y = evt.layerY;
+			self._mouse_position.x = parseInt(evt.layerX);
+			self._mouse_position.y = parseInt(evt.layerY);
+			if (g._ui.should_snap_to_50()) self.snap_mouse_position_to_50();
 		});
 		document.getElementById("grid").addEventListener("mouseup",function(evt) {
 			if (self._mouse_down) {
 				self._mouse_just_released = true;
 			}
 			self._mouse_down = false;
-			self._mouse_position.x = evt.layerX;
-			self._mouse_position.y = evt.layerY;
+			self._mouse_position.x = parseInt(evt.layerX);
+			self._mouse_position.y = parseInt(evt.layerY);
+			if (g._ui.should_snap_to_50()) self.snap_mouse_position_to_50();
 		});
+	},
+
+	snap_mouse_position_to_50:function() {
+		self._mouse_position.x = Math.round(self._mouse_position.x/50)*50;
+		self._mouse_position.y = Math.round(self._mouse_position.y/50)*50;
 	},
 
 	has_focus:function() {

@@ -11,7 +11,9 @@ function SPAppUI() { var self; return {
 			get_current_speed : function() {
 				return parseFloat($(".2pt > .speed_select").val());
 			}
-		}
+		},
+
+		_is_snap_to_50_active : false
 	},
 	_cache : {},
 
@@ -54,6 +56,16 @@ function SPAppUI() { var self; return {
 			self._params._val = $(this).val();
 		});
 
+		$("#shift_all_y_button").on("click",function(){
+			var val = parseInt($("#shift_all_y_input").val());
+			g._data.shift_all_y(val);
+		});
+
+		$("#snap_to_50").on("change",function(val) {
+			self._params._is_snap_to_50_active = $("#snap_to_50").is(':checked');
+		});
+		self._params._is_snap_to_50_active = $("#snap_to_50").is(':checked');
+
 		self.set_and_update_mode(g,self._params._mode);
 	},
 	i_update: function(g) {
@@ -69,6 +81,10 @@ function SPAppUI() { var self; return {
 		if (g._input.key_just_released(CONTROLS.PRINT)) {
 			self.json_out_pressed(g);
 		}
+	},
+
+	should_snap_to_50: function() {
+		return self._params._is_snap_to_50_active;
 	},
 
 	json_out_pressed: function (g) {
