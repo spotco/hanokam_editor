@@ -30,7 +30,6 @@
 	<script type="text/javascript">
 		/*
 		TODO:
-		snap to grid
 		*/
 		var _g = {
 			_data : SPAppData(),
@@ -41,14 +40,6 @@
 
 		$(function() {
 
-			// order here is relevant
-			var cons_order = [
-				_g._input,
-				_g._data,
-				_g._grid,
-				_g._ui
-			];
-
 			var update_order = [
 				_g._data,
 				_g._grid,
@@ -56,7 +47,7 @@
 				_g._input
 			];
 
-			cons_order.forEach(function(itr){
+			update_order.forEach(function(itr){
 				itr.i_cons(_g);
 			})
 

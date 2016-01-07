@@ -1,4 +1,4 @@
-function SPInputManager() { var self; return {
+function SPInputManager() { var self = {
 	_keycode_to_pressed : {},
 	_just_pressed : [],
 	_just_released : [],
@@ -12,7 +12,6 @@ function SPInputManager() { var self; return {
 	__keyup_queue : [],
 
 	i_cons:function(g) {
-		self = this;
 		window.addEventListener("keydown",function(evt) {
 			if (self.__keydown_queue.indexOf(evt.keyCode) == -1) self.__keydown_queue.push(evt.keyCode);
 		});
@@ -26,12 +25,10 @@ function SPInputManager() { var self; return {
 			self._mouse_down = true;
 			self._mouse_position.x = parseInt(evt.layerX);
 			self._mouse_position.y = parseInt(evt.layerY);
-			if (g._ui.should_snap_to_50()) self.snap_mouse_position_to_50();
 		});
 		document.getElementById("grid").addEventListener("mousemove",function(evt) {
 			self._mouse_position.x = parseInt(evt.layerX);
 			self._mouse_position.y = parseInt(evt.layerY);
-			if (g._ui.should_snap_to_50()) self.snap_mouse_position_to_50();
 		});
 		document.getElementById("grid").addEventListener("mouseup",function(evt) {
 			if (self._mouse_down) {
@@ -40,13 +37,7 @@ function SPInputManager() { var self; return {
 			self._mouse_down = false;
 			self._mouse_position.x = parseInt(evt.layerX);
 			self._mouse_position.y = parseInt(evt.layerY);
-			if (g._ui.should_snap_to_50()) self.snap_mouse_position_to_50();
 		});
-	},
-
-	snap_mouse_position_to_50:function() {
-		self._mouse_position.x = Math.round(self._mouse_position.x/50)*50;
-		self._mouse_position.y = Math.round(self._mouse_position.y/50)*50;
 	},
 
 	has_focus:function() {
@@ -97,4 +88,6 @@ function SPInputManager() { var self; return {
 			y: self._mouse_position.y
 		}
 	}
-}};
+}
+return self;
+};

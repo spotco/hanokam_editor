@@ -1,4 +1,4 @@
-function SPAppData() { var self; return {
+function SPAppData() { var self = {
 	TYPES: {
 		_1pt : "1pt",
 		_2pt : "2pt"
@@ -12,7 +12,6 @@ function SPAppData() { var self; return {
 	_pt_tmp_2 : null,
 
 	i_cons: function() {
-		self = this;
 		self._pt_tmp_1 = self.cons_point(0,0);
 		self._pt_tmp_2 = self.cons_point(0,0);
 
@@ -118,5 +117,6 @@ function SPAppData() { var self; return {
 			"speed":speed
 		}
 	}
-
-}; }
+}; 
+return self;
+}

@@ -1,4 +1,4 @@
-function SPGridCore() { var self; return {
+function SPGridCore() { var self = {
 	MODES : {
 		PLACE_PT_START : "PLACE_PT_START",
 		PLACE_PT1 : "PLACE_PT1",
@@ -31,7 +31,6 @@ function SPGridCore() { var self; return {
 	_canvas : null,
 
 	i_cons: function(g) {
-		self = this;
 		self._canvas = new Canvas(document.getElementById("grid"));
 		self._params._x = 0;
 		self._params._y = 0;
@@ -285,6 +284,14 @@ function SPGridCore() { var self; return {
 		var view_height = self._canvas.height / self._params._scale;
 		rtv.x = rtv.x/self._params._scale - view_width/2 + self._params._x*self._params._scale;
 		rtv.y = -rtv.y/self._params._scale + view_height/2 + self._params._y*self._params._scale;
+		
+		if (g._ui.should_snap_to_50()) {
+			rtv.x = Math.round(rtv.x/50)*50;
+			rtv.y = Math.round(rtv.y/50)*50;
+		}
+		
 		return rtv;
 	}
-}; }
+}; 
+return self;
+}

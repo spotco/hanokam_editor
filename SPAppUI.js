@@ -1,4 +1,4 @@
-function SPAppUI() { var self; return {
+function SPAppUI() { var self = {
 	MODES : {
 		"1pt" : "1pt",
 		"2pt" : "2pt"
@@ -18,7 +18,6 @@ function SPAppUI() { var self; return {
 	_cache : {},
 
 	i_cons: function(g) {
-		self = this;
 		self._params._mode = self.MODES["2pt"];
 
 		$(".controls").draggable({handle:"b"});
@@ -112,4 +111,6 @@ function SPAppUI() { var self; return {
 		}
 		g._grid.notify_ui_mode_change(g);
 	}
-}; }
+}; 
+return self;
+}
