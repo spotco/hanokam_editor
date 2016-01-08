@@ -62,12 +62,13 @@ function SPAppData() { var self = {
 		return null;
 	},
 
-	json_out: function() {
+	json_out: function(g) {
 		return (JSON.stringify({
-			"entries":self._entries
+			"entries":self._entries,
+			"spacing_bottom":g._ui.get_current_spacing_bottom()
 		}, null, 5));
 	},
-	json_in: function (text) {
+	json_in: function (g,text) {
 		var json_obj;
 		try {
 			json_obj = JSON.parse(text);
@@ -92,6 +93,7 @@ function SPAppData() { var self = {
 			}
 		}
 		self._entries = json_obj.entries;
+		g._ui.set_current_spacing_bottom(json_obj.spacing_bottom ? json_obj.spacing_bottom : 0);
 		return true;
 	},
 

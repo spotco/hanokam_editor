@@ -82,15 +82,22 @@ function SPAppUI() { var self = {
 		}
 	},
 
+	get_current_spacing_bottom: function() {
+		return parseFloat($("#spacing_bottom").val());
+	},
+	set_current_spacing_bottom: function(val) {
+		$("#spacing_bottom").val(val);
+	},
+
 	should_snap_to_50: function() {
 		return self._params._is_snap_to_50_active;
 	},
 
 	json_out_pressed: function (g) {
-		document.getElementById("msgout").value = g._data.json_out();
+		document.getElementById("msgout").value = g._data.json_out(g);
 	},
 	json_in_pressed: function(g) {
-		g._data.json_in(document.getElementById("msgout").value);
+		g._data.json_in(g,document.getElementById("msgout").value);
 	},
 
 	set_and_update_mode: function(g, mode) {
