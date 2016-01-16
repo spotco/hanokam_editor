@@ -7,7 +7,7 @@ function SPGridCore() { var self = {
 		EDITMOVE_HAS_POINT : "EDITMOVE_HAS_POINT",
 		EDITDELETE : "EDITDELETE"
 	},
-	WORLD_BOUNDS : {left:-500,right:500},
+	WORLD_BOUNDS : {left:-875,right:875},
 
 	_params: {
 		_x: 0,
