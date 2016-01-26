@@ -1,7 +1,8 @@
 function SPAppUI() { var self = {
 	MODES : {
 		"1pt" : "1pt",
-		"2pt" : "2pt"
+		"2pt" : "2pt",
+		"directional" : "directional"
 	},
 	_params : {
 		_mode : "",
@@ -35,6 +36,8 @@ function SPAppUI() { var self = {
 			self.set_and_update_mode(g,self.MODES[$(this).val()]);
 		});
 
+		//SPTODO -- move to type override
+		
 		//1pt config
 		["bubble","spike"].forEach(function(itr){
 			var itr_option = $("<option/>");
@@ -55,6 +58,17 @@ function SPAppUI() { var self = {
 			self._params._val = $(this).val();
 		});
 
+		//dir config
+		["lasercrab"].forEach(function(itr){
+			var itr_option = $("<option/>");
+			itr_option.attr({"value":itr}).text(itr);
+			$(".directional > .val_select").append(itr_option);
+		});
+		$(".directional > .val_select").on("change",function(val) {
+			self._params._val = $(this).val();
+		});
+
+		//misc config
 		$("#shift_all_y_button").on("click",function(){
 			var val = parseInt($("#shift_all_y_input").val());
 			g._data.shift_all_y(val);
@@ -110,11 +124,14 @@ function SPAppUI() { var self = {
 			}
 		}
 
+		//SPTODO -- move to type override
 		self._params._mode = mode;
 		if (mode == self.MODES["1pt"]) {
 			self._params._val = $(".1pt > .val_select > option:selected").val();
 		} else if (mode == self.MODES["2pt"]) {
 			self._params._val = $(".2pt > .val_select > option:selected").val();
+		} else if (mode == self.MODES["directional"]) {
+			self._params._val = $(".directional > .val_select > option:selected").val();
 		}
 		g._grid.notify_ui_mode_change(g);
 	}

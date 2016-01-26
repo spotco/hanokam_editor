@@ -23,6 +23,12 @@ function SPGridCore() { var self = {
 				this._pt1._draw = false;
 			}
 		},
+		_directional : {
+			_dir_place_point : {x:0,y:0,_draw:false},
+			reset : function() {
+				this._dir_place_point._draw = false;
+			}
+		},
 
 		_edit_move_has_point : {
 			_point : {x:0,y:0}
@@ -59,7 +65,7 @@ function SPGridCore() { var self = {
 		}
 		if (g._input.key_just_pressed(CONTROLS.EDITCANCEL)) {
 			self._params._mode = self.MODES.PLACE_PT_START;
-			self._params._2pt.reset();
+			self.reset_preview_params(g);
 		}
 
 
@@ -137,9 +143,35 @@ function SPGridCore() { var self = {
 						g._ui._params._2pt.get_current_speed()
 					));
 					self._params._mode = self.MODES.PLACE_PT_START;
-					self._params._2pt.reset();
+					self.reset_preview_params(g);
+				}
+			} else if (g._ui._params._mode == g._ui.MODES["directional"]) {
+				if (self._params._mode == self.MODES.PLACE_PT_START) {
+					self._params._directional._dir_place_point.x = grid_mouse_pos.x;
+					self._params._directional._dir_place_point.y = grid_mouse_pos.y;
+					self._params._mode = self.MODES.PLACE_PT1;
+					self._params._directional._dir_place_point._draw = true;
+
+				} else if (self._params._mode == self.MODES.PLACE_PT1) {
+
+					var dir_vec = (new Vector3d(
+						self._params._directional._dir_place_point.x,
+						self._params._directional._dir_place_point.y,
+						0)).sub(new Vector3d(grid_mouse_pos.x,grid_mouse_pos.y,0)).normalize();
+
+					g._data._entries.push(g._data.cons_directional(
+						g._ui._params._val,
+						g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y),
+						g._data.cons_point(
+							SPUtil.round_dec(dir_vec.x,2),
+							SPUtil.round_dec(dir_vec.y,2))
+					));
+					self._params._mode = self.MODES.PLACE_PT_START;
+					self.reset_preview_params();
 				}
 			}
+			//SPTODO -- move to type override
+
 		}
 
 		self.draw(g);
@@ -150,6 +182,7 @@ function SPGridCore() { var self = {
 	},
 	reset_preview_params:function(g) {
 		self._params._2pt.reset();
+		self._params._directional.reset();
 	},
 
 	draw:function(g) {
@@ -171,6 +204,7 @@ function SPGridCore() { var self = {
 		self._canvas.draw_circ(grid_mouse_pos.x,-grid_mouse_pos.y,4,COLOR.WHITE);
 		self._canvas.restore();
 
+		//SPTODO -- move to type override
 		if (self._params._2pt._pt_start._draw) {
 			self._canvas.save();
 			self._canvas.alpha(0.5);
@@ -188,8 +222,19 @@ function SPGridCore() { var self = {
 			}
 			self._canvas.restore();
 		}
+		if (self._params._directional._dir_place_point._draw) {
+			self._canvas.save();
+			self._canvas.alpha(0.5);
+			self._canvas.draw_circ(
+				self._params._directional._dir_place_point.x,
+				-self._params._directional._dir_place_point.y,
+				10,
+				COLOR.YELLOW);
+			self._canvas.restore();
+		}
 	},
 
+	//SPTODO -- move to type override
 	draw_entries: function(g) {
 		g._data._entries.forEach(function(itr){
 			if (itr.type == g._data.TYPES._1pt) {
@@ -214,6 +259,14 @@ function SPGridCore() { var self = {
 
 				self._canvas.draw_line(
 					pt_1.x, -pt_1.y, pt_1.x + dir.x, -(pt_1.y + dir.y),5,COLOR.YELLOW);
+			
+			} else if (itr.type == g._data.TYPES._directional) {
+				
+				var pt2 = (new Vector3d(itr.dir.x,itr.dir.y,0)).scale(50).add(new Vector3d(itr.start.x,itr.start.y,0));
+
+				self._canvas.draw_line(itr.start.x,-itr.start.y,pt2.x,-pt2.y,3,COLOR.RED);
+				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
+				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");
 			}
 		});
 	},

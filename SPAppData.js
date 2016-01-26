@@ -1,7 +1,9 @@
 function SPAppData() { var self = {
+	//SPTODO -- move to type override
 	TYPES: {
 		_1pt : "1pt",
-		_2pt : "2pt"
+		_2pt : "2pt",
+		_directional : "directional"
 	},
 
 	_entries : [],
@@ -15,8 +17,20 @@ function SPAppData() { var self = {
 		self._pt_tmp_1 = self.cons_point(0,0);
 		self._pt_tmp_2 = self.cons_point(0,0);
 
-		self._type_check_protos[self.TYPES._1pt] = self.cons_1pt("test_val",self.cons_point(0,0));
-		self._type_check_protos[self.TYPES._2pt] = self.cons_2pt("test_val",self.cons_point(0,0),self.cons_point(0,0),self.cons_point(0,0),self.cons_point(0,0));
+		self._type_check_protos[self.TYPES._1pt] = self.cons_1pt(
+			"test_val",
+			self.cons_point(0,0));
+		self._type_check_protos[self.TYPES._2pt] = self.cons_2pt(
+			"test_val",
+			self.cons_point(0,0),
+			self.cons_point(0,0),
+			self.cons_point(0,0),
+			self.cons_point(0,0));
+		self._type_check_protos[self.TYPES._directional] = self.cons_directional(
+			"test_val",
+			self.cons_point(0,0),
+			self.cons_point(0,1)
+		);
 	},
 
 	i_update: function() {},
@@ -42,6 +56,7 @@ function SPAppData() { var self = {
 	},
 
 	click_point0_element1:function(grid_mouse_pos) {
+		//SPTODO -- move to type override
 		var pt_dist_max = 10;
 		for (var i = 0; i < self._entries.length; i++) {
 			var itr = self._entries[i];
@@ -56,6 +71,10 @@ function SPAppData() { var self = {
 					return [itr.pt1,itr];
 				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt2) < pt_dist_max) {
 					return [itr.pt2,itr];
+				}
+			} else if (itr.type == self.TYPES._directional) {
+				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
+					return [itr.start,itr];
 				}
 			}
 		}
@@ -117,6 +136,14 @@ function SPAppData() { var self = {
 			"pt2":point_pt2,
 			"start":point_start,
 			"speed":speed
+		}
+	},
+	cons_directional: function(val,point_start,dir) {
+		return {
+			"type":self.TYPES._directional,
+			"val":val,
+			"start":point_start,
+			"dir":dir
 		}
 	}
 }; 

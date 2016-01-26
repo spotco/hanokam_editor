@@ -42,6 +42,10 @@ var SPUtil = {
 	},
     pt_dist:function(a,b) {
         return Math.sqrt(Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2));
+    },
+    round_dec:function(val,i) {
+        var div = Math.pow(10,i);
+        return Math.floor(val*div)/div;
     }
 };
 
@@ -86,6 +90,12 @@ var Vector3d = (function () {
     };
     Vector3d.prototype.get_angle = function () {
         return Math.atan2(this.y, this.x);
+    };
+    Vector3d.prototype.add = function(b) {
+        return new Vector3d(this.x+b.x,this.y+b.y,this.z+b.z);
+    };
+    Vector3d.prototype.sub = function(b) {
+        return new Vector3d(this.x-b.x,this.y-b.y,this.z-b.z);
     };
     Vector3d._tmp = new Vector3d(0,0,0);
     return Vector3d;
