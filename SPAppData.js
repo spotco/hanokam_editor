@@ -3,7 +3,8 @@ function SPAppData() { var self = {
 	TYPES: {
 		_1pt : "1pt",
 		_2pt : "2pt",
-		_directional : "directional"
+		_directional : "directional",
+		_line : "line"
 	},
 
 	_entries : [],
@@ -76,6 +77,12 @@ function SPAppData() { var self = {
 				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
 					return [itr.start,itr];
 				}
+			} else if (itr.type == self.TYPES._line) {
+				if (SPUtil.pt_dist(grid_mouse_pos,itr.pt1) < pt_dist_max) {
+					return [itr.pt1,itr];
+				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt2) < pt_dist_max) {
+					return [itr.pt2,itr];
+				}
 			}
 		}
 		return null;
@@ -145,6 +152,14 @@ function SPAppData() { var self = {
 			"start":point_start,
 			"dir":dir
 		}
+	},
+	cons_line: function(val,pt1,pt2) {
+		return {
+			"type":self.TYPES._line,
+			"val":val,
+			"pt1":pt1,
+			"pt2":pt2
+		};
 	}
 }; 
 return self;

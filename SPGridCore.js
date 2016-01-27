@@ -29,6 +29,12 @@ function SPGridCore() { var self = {
 				this._dir_place_point._draw = false;
 			}
 		},
+		_line : {
+			_pt1 : {x:0,y:0,_draw:false},
+			reset : function() {
+				this._pt1._draw = false;
+			}
+		},
 
 		_edit_move_has_point : {
 			_point : {x:0,y:0}
@@ -169,6 +175,22 @@ function SPGridCore() { var self = {
 					self._params._mode = self.MODES.PLACE_PT_START;
 					self.reset_preview_params();
 				}
+			} else if (g._ui._params._mode == g._ui.MODES["line"]) {
+				if (self._params._mode == self.MODES.PLACE_PT_START) {
+					self._params._line._pt1.x = grid_mouse_pos.x;
+					self._params._line._pt1.y = grid_mouse_pos.y;
+					self._params._mode = self.MODES.PLACE_PT1;
+					self._params._line._pt1._draw = true;
+
+				} else if (self._params._mode == self.MODES.PLACE_PT1) {
+					g._data._entries.push(g._data.cons_line(
+						g._ui._params._val,
+						g._data.cons_point(self._params._line._pt1.x,self._params._line._pt1.y),
+						g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y)
+					));
+					self._params._mode = self.MODES.PLACE_PT_START;
+					self.reset_preview_params();
+				}
 			}
 			//SPTODO -- move to type override
 
@@ -181,8 +203,10 @@ function SPGridCore() { var self = {
 		self.reset_preview_params(g);
 	},
 	reset_preview_params:function(g) {
+		//SPTODO -- move to type override
 		self._params._2pt.reset();
 		self._params._directional.reset();
+		self._params._line.reset();
 	},
 
 	draw:function(g) {
@@ -232,6 +256,16 @@ function SPGridCore() { var self = {
 				COLOR.YELLOW);
 			self._canvas.restore();
 		}
+		if (self._params._line._pt1._draw) {
+			self._canvas.save();
+			self._canvas.alpha(0.5);
+			self._canvas.draw_circ(
+				self._params._line._pt1.x,
+				-self._params._line._pt1.y,
+				10,
+				COLOR.YELLOW);
+			self._canvas.restore();
+		}
 	},
 
 	//SPTODO -- move to type override
@@ -261,12 +295,17 @@ function SPGridCore() { var self = {
 					pt_1.x, -pt_1.y, pt_1.x + dir.x, -(pt_1.y + dir.y),5,COLOR.YELLOW);
 			
 			} else if (itr.type == g._data.TYPES._directional) {
-				
 				var pt2 = (new Vector3d(itr.dir.x,itr.dir.y,0)).scale(50).add(new Vector3d(itr.start.x,itr.start.y,0));
 
 				self._canvas.draw_line(itr.start.x,-itr.start.y,pt2.x,-pt2.y,3,COLOR.RED);
 				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
 				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");
+			
+			} else if (itr.type == g._data.TYPES._line) {
+				self._canvas.draw_line(itr.pt1.x,-itr.pt1.y,itr.pt2.x,-itr.pt2.y,3,COLOR.RED);
+				self._canvas.draw_circ(itr.pt1.x,-itr.pt1.y,10,COLOR.YELLOW);
+				self._canvas.draw_circ(itr.pt2.x,-itr.pt2.y,10,COLOR.YELLOW);
+				self._canvas.draw_text(itr.pt1.x,-itr.pt1.y-10,itr.val,15,COLOR.YELLOW,"center");
 			}
 		});
 	},

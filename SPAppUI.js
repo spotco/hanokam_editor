@@ -2,7 +2,8 @@ function SPAppUI() { var self = {
 	MODES : {
 		"1pt" : "1pt",
 		"2pt" : "2pt",
-		"directional" : "directional"
+		"directional" : "directional",
+		"line" : "line"
 	},
 	_params : {
 		_mode : "",
@@ -39,7 +40,7 @@ function SPAppUI() { var self = {
 		//SPTODO -- move to type override
 		
 		//1pt config
-		["bubble","spike"].forEach(function(itr){
+		["bubble","spike","blockcenter"].forEach(function(itr){
 			var itr_option = $("<option/>");
 			itr_option.attr({"value":itr}).text(itr);
 			$(".1pt > .val_select").append(itr_option);
@@ -65,6 +66,16 @@ function SPAppUI() { var self = {
 			$(".directional > .val_select").append(itr_option);
 		});
 		$(".directional > .val_select").on("change",function(val) {
+			self._params._val = $(this).val();
+		});
+
+		//line config
+		["blockleft","blockright"].forEach(function(itr){
+			var itr_option = $("<option/>");
+			itr_option.attr({"value":itr}).text(itr);
+			$(".line > .val_select").append(itr_option);
+		});
+		$(".line > .val_select").on("change",function(val) {
 			self._params._val = $(this).val();
 		});
 
@@ -132,6 +143,8 @@ function SPAppUI() { var self = {
 			self._params._val = $(".2pt > .val_select > option:selected").val();
 		} else if (mode == self.MODES["directional"]) {
 			self._params._val = $(".directional > .val_select > option:selected").val();
+		} else if (mode == self.MODES["line"]) {
+			self._params._val = $(".line > .val_select > option:selected").val();
 		}
 		g._grid.notify_ui_mode_change(g);
 	}
