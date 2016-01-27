@@ -15,27 +15,6 @@ function SPGridCore() { var self = {
 		_scale : 1,
 		_mode : "",
 
-		_2pt : {
-			_pt_start : {x:0,y:0,_draw:false},
-			_pt1 : {x:0,y:0,_draw:false},
-			reset : function() {
-				this._pt_start._draw = false;
-				this._pt1._draw = false;
-			}
-		},
-		_directional : {
-			_dir_place_point : {x:0,y:0,_draw:false},
-			reset : function() {
-				this._dir_place_point._draw = false;
-			}
-		},
-		_line : {
-			_pt1 : {x:0,y:0,_draw:false},
-			reset : function() {
-				this._pt1._draw = false;
-			}
-		},
-
 		_edit_move_has_point : {
 			_point : {x:0,y:0}
 		}
@@ -120,80 +99,13 @@ function SPGridCore() { var self = {
 					});
 				}
 
-			} else if (g._ui._params._mode == g._ui.MODES["1pt"]) {
-				self._params._mode = self.MODES.PLACE_PT_START;
-				g._data._entries.push(g._data.cons_1pt(
-					g._ui._params._val, 
-					g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y)
-				));
-
-			} else if (g._ui._params._mode == g._ui.MODES["2pt"]) {
-				if (self._params._mode == self.MODES.PLACE_PT_START) {
-					self._params._2pt._pt_start.x = grid_mouse_pos.x;
-					self._params._2pt._pt_start.y = grid_mouse_pos.y;
-					self._params._2pt._pt_start._draw = true;
-					self._params._mode = self.MODES.PLACE_PT1;
-
-				} else if (self._params._mode == self.MODES.PLACE_PT1) {
-					self._params._2pt._pt1.x = grid_mouse_pos.x;
-					self._params._2pt._pt1.y = grid_mouse_pos.y;
-					self._params._2pt._pt1._draw = true;
-					self._params._mode = self.MODES.PLACE_PT2;
-
-				} else {
-					g._data._entries.push(g._data.cons_2pt(
-						g._ui._params._val,
-						g._data.cons_point(self._params._2pt._pt_start.x,self._params._2pt._pt_start.y),
-						g._data.cons_point(self._params._2pt._pt1.x,self._params._2pt._pt1.y),
-						g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y),
-						g._ui._params._2pt.get_current_speed()
-					));
-					self._params._mode = self.MODES.PLACE_PT_START;
-					self.reset_preview_params(g);
-				}
-			} else if (g._ui._params._mode == g._ui.MODES["directional"]) {
-				if (self._params._mode == self.MODES.PLACE_PT_START) {
-					self._params._directional._dir_place_point.x = grid_mouse_pos.x;
-					self._params._directional._dir_place_point.y = grid_mouse_pos.y;
-					self._params._mode = self.MODES.PLACE_PT1;
-					self._params._directional._dir_place_point._draw = true;
-
-				} else if (self._params._mode == self.MODES.PLACE_PT1) {
-
-					var dir_vec = (new Vector3d(
-						self._params._directional._dir_place_point.x,
-						self._params._directional._dir_place_point.y,
-						0)).sub(new Vector3d(grid_mouse_pos.x,grid_mouse_pos.y,0)).normalize();
-
-					g._data._entries.push(g._data.cons_directional(
-						g._ui._params._val,
-						g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y),
-						g._data.cons_point(
-							SPUtil.round_dec(dir_vec.x,2),
-							SPUtil.round_dec(dir_vec.y,2))
-					));
-					self._params._mode = self.MODES.PLACE_PT_START;
-					self.reset_preview_params();
-				}
-			} else if (g._ui._params._mode == g._ui.MODES["line"]) {
-				if (self._params._mode == self.MODES.PLACE_PT_START) {
-					self._params._line._pt1.x = grid_mouse_pos.x;
-					self._params._line._pt1.y = grid_mouse_pos.y;
-					self._params._mode = self.MODES.PLACE_PT1;
-					self._params._line._pt1._draw = true;
-
-				} else if (self._params._mode == self.MODES.PLACE_PT1) {
-					g._data._entries.push(g._data.cons_line(
-						g._ui._params._val,
-						g._data.cons_point(self._params._line._pt1.x,self._params._line._pt1.y),
-						g._data.cons_point(grid_mouse_pos.x,grid_mouse_pos.y)
-					));
-					self._params._mode = self.MODES.PLACE_PT_START;
-					self.reset_preview_params();
-				}
+			} else {
+				TYPES.forEach(function(type) {
+					if (g._ui._params._mode == type.get_type()) {
+						type.grid_mouse_released(g);
+					}
+				});
 			}
-			//SPTODO -- move to type override
-
 		}
 
 		self.draw(g);
@@ -203,10 +115,9 @@ function SPGridCore() { var self = {
 		self.reset_preview_params(g);
 	},
 	reset_preview_params:function(g) {
-		//SPTODO -- move to type override
-		self._params._2pt.reset();
-		self._params._directional.reset();
-		self._params._line.reset();
+		TYPES.forEach(function(type) {
+			type.grid_param_reset(g);
+		});
 	},
 
 	draw:function(g) {
@@ -228,85 +139,18 @@ function SPGridCore() { var self = {
 		self._canvas.draw_circ(grid_mouse_pos.x,-grid_mouse_pos.y,4,COLOR.WHITE);
 		self._canvas.restore();
 
-		//SPTODO -- move to type override
-		if (self._params._2pt._pt_start._draw) {
-			self._canvas.save();
-			self._canvas.alpha(0.5);
-			self._canvas.draw_circ(self._params._2pt._pt_start.x,-self._params._2pt._pt_start.y,10,COLOR.YELLOW);
-			if (self._params._2pt._pt1._draw) {
-				self._canvas.draw_circ(
-					self._params._2pt._pt1.x,
-					-self._params._2pt._pt1.y,5,COLOR.RED);
-				
-				self._canvas.draw_line(
-					self._params._2pt._pt1.x,
-					-self._params._2pt._pt1.y,
-					grid_mouse_pos.x,
-					-grid_mouse_pos.y,2,COLOR.RED);
-			}
-			self._canvas.restore();
-		}
-		if (self._params._directional._dir_place_point._draw) {
-			self._canvas.save();
-			self._canvas.alpha(0.5);
-			self._canvas.draw_circ(
-				self._params._directional._dir_place_point.x,
-				-self._params._directional._dir_place_point.y,
-				10,
-				COLOR.YELLOW);
-			self._canvas.restore();
-		}
-		if (self._params._line._pt1._draw) {
-			self._canvas.save();
-			self._canvas.alpha(0.5);
-			self._canvas.draw_circ(
-				self._params._line._pt1.x,
-				-self._params._line._pt1.y,
-				10,
-				COLOR.YELLOW);
-			self._canvas.restore();
-		}
+		TYPES.forEach(function(type) {
+			type.draw_preview(g);
+		});
 	},
 
-	//SPTODO -- move to type override
 	draw_entries: function(g) {
 		g._data._entries.forEach(function(itr){
-			if (itr.type == g._data.TYPES._1pt) {
-				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
-				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");
-
-			} else if (itr.type == g._data.TYPES._2pt) {
-				self._canvas.draw_circ(itr.pt1.x,-itr.pt1.y,5,COLOR.RED);
-				self._canvas.draw_line(itr.pt1.x,-itr.pt1.y,itr.pt2.x,-itr.pt2.y,2,COLOR.RED);
-				self._canvas.draw_circ(itr.pt2.x,-itr.pt2.y,5,COLOR.RED);
-
-				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val+"("+itr.speed+")",15,COLOR.YELLOW,"center");
-				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
-
-				var pt_1 = g._data._pt_tmp_1;
-				pt_1.x = itr.start.x; 
-				pt_1.y = itr.start.y;
-				var pt_2 = g._data._pt_tmp_2;
-				pt_2.x = itr.pt1.x; 
-				pt_2.y = itr.pt1.y;
-				var dir = Vector3d._tmp.set(pt_2.x-pt_1.x,pt_2.y-pt_1.y,0).normalize().scale(20);
-
-				self._canvas.draw_line(
-					pt_1.x, -pt_1.y, pt_1.x + dir.x, -(pt_1.y + dir.y),5,COLOR.YELLOW);
-			
-			} else if (itr.type == g._data.TYPES._directional) {
-				var pt2 = (new Vector3d(itr.dir.x,itr.dir.y,0)).scale(50).add(new Vector3d(itr.start.x,itr.start.y,0));
-
-				self._canvas.draw_line(itr.start.x,-itr.start.y,pt2.x,-pt2.y,3,COLOR.RED);
-				self._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
-				self._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");
-			
-			} else if (itr.type == g._data.TYPES._line) {
-				self._canvas.draw_line(itr.pt1.x,-itr.pt1.y,itr.pt2.x,-itr.pt2.y,3,COLOR.RED);
-				self._canvas.draw_circ(itr.pt1.x,-itr.pt1.y,10,COLOR.YELLOW);
-				self._canvas.draw_circ(itr.pt2.x,-itr.pt2.y,10,COLOR.YELLOW);
-				self._canvas.draw_text(itr.pt1.x,-itr.pt1.y-10,itr.val,15,COLOR.YELLOW,"center");
-			}
+			TYPES.forEach(function(type) {
+				if (itr.type == type.get_type()) {
+					type.entry_draw(g,itr);
+				}
+			});
 		});
 	},
 

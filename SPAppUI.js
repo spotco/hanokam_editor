@@ -1,85 +1,40 @@
 function SPAppUI() { var self = {
-	MODES : {
-		"1pt" : "1pt",
-		"2pt" : "2pt",
-		"directional" : "directional",
-		"line" : "line"
-	},
 	_params : {
 		_mode : "",
 		_val : "",
-
-		_2pt : {
-			get_current_speed : function() {
-				return parseFloat($(".2pt > .speed_select").val());
-			}
-		},
-
 		_is_snap_to_50_active : false
 	},
 	_cache : {},
 
 	i_cons: function(g) {
-		self._params._mode = self.MODES["2pt"];
+		self._params._mode = TYPES[0].get_type();
 
 		$(".controls").draggable({handle:"b"});
 
-		//types config
-		for (var itr in self.MODES) {
+		TYPES.forEach(function(type){
 			var itr_option = $("<option/>");
-			itr_option.attr({"value":itr}).text(itr);
+			itr_option.attr({"value":type.get_type()}).text(type.get_type());
 			$("#type_select").append(itr_option);	
-			if (self._params._mode == self.MODES[itr]) {
+			if (self._params._mode == type.get_type()) {
 				itr_option.attr("selected",true);
 			}
-		}
+		});
+
 		$("#type_select").on("change",function(val){
-			self.set_and_update_mode(g,self.MODES[$(this).val()]);
+			self.set_and_update_mode(g,$(this).val());
 		});
-
-		//SPTODO -- move to type override
 		
-		//1pt config
-		["bubble","spike","blockcenter"].forEach(function(itr){
-			var itr_option = $("<option/>");
-			itr_option.attr({"value":itr}).text(itr);
-			$(".1pt > .val_select").append(itr_option);
-		});
-		$(".1pt > .val_select").on("change",function(val) {
-			self._params._val = $(this).val();
-		});
-
-		//2pt config
-		["bubble","spike","puffer"].forEach(function(itr){
-			var itr_option = $("<option/>");
-			itr_option.attr({"value":itr}).text(itr);
-			$(".2pt > .val_select").append(itr_option);
-		});
-		$(".2pt > .val_select").on("change",function(val) {
-			self._params._val = $(this).val();
+		TYPES.forEach(function(type){
+			type.vals().forEach(function(itr){
+				var itr_option = $("<option/>");
+				itr_option.attr({"value":itr}).text(itr);
+				$(type.css_class_selector()+" > .val_select").append(itr_option);
+			});
+			$(type.css_class_selector()+" > .val_select").on("change",function(val) {
+				self._params._val = $(this).val();
+			});
 		});
 
-		//dir config
-		["lasercrab"].forEach(function(itr){
-			var itr_option = $("<option/>");
-			itr_option.attr({"value":itr}).text(itr);
-			$(".directional > .val_select").append(itr_option);
-		});
-		$(".directional > .val_select").on("change",function(val) {
-			self._params._val = $(this).val();
-		});
-
-		//line config
-		["blockleft","blockright"].forEach(function(itr){
-			var itr_option = $("<option/>");
-			itr_option.attr({"value":itr}).text(itr);
-			$(".line > .val_select").append(itr_option);
-		});
-		$(".line > .val_select").on("change",function(val) {
-			self._params._val = $(this).val();
-		});
-
-		//misc config
 		$("#shift_all_y_button").on("click",function(){
 			var val = parseInt($("#shift_all_y_input").val());
 			g._data.shift_all_y(val);
@@ -126,26 +81,19 @@ function SPAppUI() { var self = {
 	},
 
 	set_and_update_mode: function(g, mode) {
-		for (var itr in self.MODES) {
-			var itr_val = self.MODES[itr];
+		TYPES.forEach(function(type){
+			var itr_val = type.get_type();
 			if (itr_val == mode) {
 				$("."+itr_val).show();
 			} else {
 				$("."+itr_val).hide();	
 			}
-		}
+		});
 
-		//SPTODO -- move to type override
 		self._params._mode = mode;
-		if (mode == self.MODES["1pt"]) {
-			self._params._val = $(".1pt > .val_select > option:selected").val();
-		} else if (mode == self.MODES["2pt"]) {
-			self._params._val = $(".2pt > .val_select > option:selected").val();
-		} else if (mode == self.MODES["directional"]) {
-			self._params._val = $(".directional > .val_select > option:selected").val();
-		} else if (mode == self.MODES["line"]) {
-			self._params._val = $(".line > .val_select > option:selected").val();
-		}
+		TYPES.forEach(function(type){
+			self._params._val = $(type.css_class_selector()+" > .val_select > option:selected").val();
+		});
 		g._grid.notify_ui_mode_change(g);
 	}
 }; 

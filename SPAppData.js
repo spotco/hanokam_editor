@@ -1,15 +1,5 @@
 function SPAppData() { var self = {
-	//SPTODO -- move to type override
-	TYPES: {
-		_1pt : "1pt",
-		_2pt : "2pt",
-		_directional : "directional",
-		_line : "line"
-	},
-
 	_entries : [],
-
-	_type_check_protos : {},
 
 	_pt_tmp_1 : null,
 	_pt_tmp_2 : null,
@@ -17,21 +7,6 @@ function SPAppData() { var self = {
 	i_cons: function() {
 		self._pt_tmp_1 = self.cons_point(0,0);
 		self._pt_tmp_2 = self.cons_point(0,0);
-
-		self._type_check_protos[self.TYPES._1pt] = self.cons_1pt(
-			"test_val",
-			self.cons_point(0,0));
-		self._type_check_protos[self.TYPES._2pt] = self.cons_2pt(
-			"test_val",
-			self.cons_point(0,0),
-			self.cons_point(0,0),
-			self.cons_point(0,0),
-			self.cons_point(0,0));
-		self._type_check_protos[self.TYPES._directional] = self.cons_directional(
-			"test_val",
-			self.cons_point(0,0),
-			self.cons_point(0,1)
-		);
 	},
 
 	i_update: function() {},
@@ -46,44 +21,25 @@ function SPAppData() { var self = {
 		console.log(y_val)
 		for (var i = 0; i < self._entries.length; i++) {
 			var itr = self._entries[i];
-			if (itr.type == self.TYPES._1pt) {
-				itr.start.y += y_val;
-			} else if (itr.type == self.TYPES._2pt) {
-				itr.start.y += y_val;
-				itr.pt1.y += y_val;
-				itr.pt2.y += y_val;
-			}
+			TYPES.forEach(function(type){
+				if (type.get_type() == itr.type) {
+					type.shift_y(itr,y_val);
+				}
+			});
 		}
 	},
 
 	click_point0_element1:function(grid_mouse_pos) {
-		//SPTODO -- move to type override
 		var pt_dist_max = 10;
 		for (var i = 0; i < self._entries.length; i++) {
 			var itr = self._entries[i];
-			if (itr.type == self.TYPES._1pt) {
-				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
-					return [itr.start,itr];
+			var rtv = null;
+			TYPES.forEach(function(type) {
+				if (itr.type == type.get_type()) {
+					rtv = type.click_point0_element1(grid_mouse_pos,itr,pt_dist_max);
 				}
-			} else if (itr.type == self.TYPES._2pt) {
-				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
-					return [itr.start,itr];
-				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt1) < pt_dist_max) {
-					return [itr.pt1,itr];
-				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt2) < pt_dist_max) {
-					return [itr.pt2,itr];
-				}
-			} else if (itr.type == self.TYPES._directional) {
-				if (SPUtil.pt_dist(grid_mouse_pos,itr.start) < pt_dist_max) {
-					return [itr.start,itr];
-				}
-			} else if (itr.type == self.TYPES._line) {
-				if (SPUtil.pt_dist(grid_mouse_pos,itr.pt1) < pt_dist_max) {
-					return [itr.pt1,itr];
-				} else if (SPUtil.pt_dist(grid_mouse_pos,itr.pt2) < pt_dist_max) {
-					return [itr.pt2,itr];
-				}
-			}
+			});
+			if (rtv != null) return rtv;
 		}
 		return null;
 	},
@@ -110,14 +66,6 @@ function SPAppData() { var self = {
 			return false;
 		}
 
-		for (var i = 0; i < json_obj.entries.length; i++) {
-			var itr = json_obj.entries[i];
-			var cmp = self._type_check_protos[itr.type];
-			if (!SPUtil.assert_b_has_all_a_prop(cmp,itr)) {
-				console.log("invalid json entry at entries["+i+"]");
-				return false;
-			}
-		}
 		self._entries = json_obj.entries;
 		g._ui.set_current_spacing_bottom(json_obj.spacing_bottom ? json_obj.spacing_bottom : 0);
 		return true;
@@ -127,39 +75,6 @@ function SPAppData() { var self = {
 		return {
 			"x":x,"y":y
 		}
-	},
-	cons_1pt: function(val,point_start) {
-		return {
-			"type":self.TYPES._1pt,
-			"val":val,
-			"start":point_start
-		}
-	},
-	cons_2pt: function(val,point_start,point_pt1,point_pt2,speed) {
-		return {
-			"type":self.TYPES._2pt,
-			"val":val,
-			"pt1":point_pt1,
-			"pt2":point_pt2,
-			"start":point_start,
-			"speed":speed
-		}
-	},
-	cons_directional: function(val,point_start,dir) {
-		return {
-			"type":self.TYPES._directional,
-			"val":val,
-			"start":point_start,
-			"dir":dir
-		}
-	},
-	cons_line: function(val,pt1,pt2) {
-		return {
-			"type":self.TYPES._line,
-			"val":val,
-			"pt1":pt1,
-			"pt2":pt2
-		};
 	}
 }; 
 return self;

@@ -11,6 +11,11 @@
 	<script src="SPAppData.js" type="text/javascript"></script>
 	<script src="SPGridCore.js" type="text/javascript"></script>
 	<script src="SPAppUI.js" type="text/javascript"></script>
+
+	<script src="types/_1pt.js" type="text/javascript"></script>
+	<script src="types/_2pt.js" type="text/javascript"></script>
+	<script src="types/_directional.js" type="text/javascript"></script>
+	<script src="types/_line.js" type="text/javascript"></script>
 	
 	<style type="text/css">
 .controls {
@@ -47,9 +52,13 @@
 				_g._input
 			];
 
+			TYPES.forEach(function(itr) {
+				itr.i_cons(_g);
+			});
+
 			update_order.forEach(function(itr){
 				itr.i_cons(_g);
-			})
+			});
 
 			window.setInterval(function() {
 				update_order.forEach(function(itr){
