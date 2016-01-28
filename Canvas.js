@@ -64,7 +64,18 @@ var Canvas = (function () {
     };
     Canvas.prototype.alpha = function(alpha) {
     	this._g.globalAlpha = alpha;
-    }
+    };
+    Canvas.prototype.draw_triangle = function(x0,y0,x1,y1,x2,y2,color) {
+        this._g.save();
+        this._g.fillStyle = color;
+        this._g.beginPath();
+        this._g.moveTo(x0,y0);
+        this._g.lineTo(x1,y1);
+        this._g.lineTo(x2,y2);
+        this._g.closePath();
+        this._g.fill();
+        this._g.restore();
+    };
     
     return Canvas;
 })();

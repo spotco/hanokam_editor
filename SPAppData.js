@@ -71,6 +71,7 @@ function SPAppData() { var self = {
 		return true;
 	},
 
+	//SPTODO - move to utility class
 	cons_point: function(x,y) {
 		return {
 			"x":x,"y":y

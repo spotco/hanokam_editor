@@ -14,7 +14,7 @@ if (typeof(TYPES) == "undefined") { TYPES = []; }
 		},
 
 		vals: function() {
-			return ["bubble","spike","blockcenter"];
+			return ["bubble","spike"];
 		},
 
 		css_class_selector: function() {
@@ -48,7 +48,7 @@ if (typeof(TYPES) == "undefined") { TYPES = []; }
 			}
 		},
 
-		draw_preview: function(g,itr) {},
+		draw_preview: function(g) {},
 		entry_draw: function(g,itr) {
 			g._grid._canvas.draw_circ(itr.start.x,-itr.start.y,10,COLOR.YELLOW);
 			g._grid._canvas.draw_text(itr.start.x,-itr.start.y-10,itr.val,15,COLOR.YELLOW,"center");

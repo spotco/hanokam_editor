@@ -16,7 +16,7 @@ if (typeof(TYPES) == "undefined") { TYPES = []; }
 		},
 
 		vals: function() {
-			return ["blockleft","blockright"];
+			return [];
 		},
 
 		css_class_selector: function() {
@@ -64,7 +64,7 @@ if (typeof(TYPES) == "undefined") { TYPES = []; }
 			};
 		},
 
-		draw_preview: function(g,itr) {
+		draw_preview: function(g) {
 			if (g._grid._params[self.get_type()]._pt1._draw) {
 				g._grid._canvas.save();
 				g._grid._canvas.alpha(0.5);

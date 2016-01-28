@@ -13,6 +13,7 @@ function SPInputManager() { var self = {
 
 	i_cons:function(g) {
 		window.addEventListener("keydown",function(evt) {
+			if (!self.has_focus()) return;
 			if (self.__keydown_queue.indexOf(evt.keyCode) == -1) self.__keydown_queue.push(evt.keyCode);
 		});
 		window.addEventListener("keyup",function(evt) {

@@ -69,7 +69,7 @@ if (typeof(TYPES) == "undefined") { TYPES = []; }
 			}
 		},
 
-		draw_preview: function(g,itr) {
+		draw_preview: function(g) {
 			if (g._grid._params[self.get_type()]._dir_place_point._draw) {
 				g._grid._canvas.save();
 				g._grid._canvas.alpha(0.5);
