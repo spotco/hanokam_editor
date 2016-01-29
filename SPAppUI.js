@@ -92,7 +92,11 @@ function SPAppUI() { var self = {
 
 		self._params._mode = mode;
 		TYPES.forEach(function(type){
-			self._params._val = $(type.css_class_selector()+" > .val_select > option:selected").val();
+			console.log(mode);
+			if (type.get_type() == mode) {
+
+				self._params._val = $(type.css_class_selector()+" > .val_select > option:selected").val();
+			}
 		});
 		g._grid.notify_ui_mode_change(g);
 	}

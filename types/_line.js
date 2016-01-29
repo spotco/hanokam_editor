@@ -16,7 +16,7 @@ if (typeof(TYPES) == "undefined") { TYPES = []; }
 		},
 
 		vals: function() {
-			return [];
+			return ["TEST"];
 		},
 
 		css_class_selector: function() {
